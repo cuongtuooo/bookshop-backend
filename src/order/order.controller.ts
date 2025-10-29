@@ -1,8 +1,9 @@
-import { Controller, Post, Body, Get, Param, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, Patch } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/users/users.interface';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('order')
 export class OrderController {
@@ -28,5 +29,16 @@ export class OrderController {
   @ResponseMessage('Get order detail')
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(id);
+  }
+
+  // 🆕 API cập nhật trạng thái
+  @Patch(':id/status')
+  @ResponseMessage('Cập nhật trạng thái đơn hàng')
+  updateStatus(
+    @Param('id') id: string,
+    @Body() updateOrderDto: UpdateOrderDto,
+    @User() user: IUser
+  ) {
+    return this.orderService.updateStatus(id, updateOrderDto.status, user);
   }
 }

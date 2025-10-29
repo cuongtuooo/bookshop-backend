@@ -16,7 +16,7 @@ export class Order {
     phone: string;
 
     @Prop()
-    type: string;
+    type: string; // COD, BANKING, v.v.
 
     @Prop()
     paymentStatus: string;
@@ -25,37 +25,72 @@ export class Order {
     paymentRef: string;
 
     @Prop({
-    type: [
-        {
-        _id: { type: mongoose.Schema.Types.ObjectId, ref: Book.name, required: true },
-        quantity: { type: Number, required: true },
-        bookName: { type: String, required: true },
-        },
-    ],})
+        type: [
+            {
+                _id: { type: mongoose.Schema.Types.ObjectId, ref: Book.name, required: true },
+                quantity: { type: Number, required: true },
+                bookName: { type: String, required: true },
+            },
+        ],
+    })
     detail: {
-    _id: mongoose.Types.ObjectId;
-    quantity: number;
-    bookName: string;
+        _id: mongoose.Types.ObjectId;
+        quantity: number;
+        bookName: string;
     }[];
 
     @Prop()
     totalPrice: number;
 
-    @Prop({ type: Object })
+    /** 🆕 Trạng thái đơn hàng */
+    @Prop({
+        type: String,
+        enum: [
+            'Chờ xác nhận',      // user vừa đặt
+            'Đang giao hàng',    // admin nhấn “Giao hàng”
+            'Đã giao hàng',      // admin xác nhận giao xong
+            'Đã nhận hàng',      // user xác nhận đã nhận
+            'Hoàn hàng',         // user báo hoàn
+            'Đã nhận hàng hoàn', // admin xác nhận hoàn thành hoàn
+            'Đã hủy đơn',        // user hủy
+        ],
+        default: 'Chờ xác nhận',
+    })
+    status: string;
+
+    /** Người tạo đơn */
+    @Prop({
+        type: {
+            _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            email: String,
+        },
+    })
     createdBy: {
-        _id: mongoose.Schema.Types.ObjectId;
+        _id: mongoose.Types.ObjectId;
         email: string;
     };
 
-    @Prop({ type: Object })
+    /** Người cập nhật đơn */
+    @Prop({
+        type: {
+            _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            email: String,
+        },
+    })
     updatedBy: {
-        _id: mongoose.Schema.Types.ObjectId;
+        _id: mongoose.Types.ObjectId;
         email: string;
     };
 
-    @Prop({ type: Object })
+    /** Người xóa đơn */
+    @Prop({
+        type: {
+            _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            email: String,
+        },
+    })
     deletedBy: {
-        _id: mongoose.Schema.Types.ObjectId;
+        _id: mongoose.Types.ObjectId;
         email: string;
     };
 
